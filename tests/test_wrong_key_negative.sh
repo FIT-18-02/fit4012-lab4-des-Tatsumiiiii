@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
-# TODO_STUDENT: Hoàn thiện negative test cho wrong key / incorrect key / sai key.
-# Gợi ý: giải mã với khóa sai và chứng minh không khôi phục đúng plaintext.
 set -euo pipefail
 
-echo "TODO_STUDENT: implement wrong key negative test"
-exit 0
+echo "[TEST] Wrong key (negative test)"
+
+g++ -std=c++17 -Wall -Wextra -pedantic des.cpp -o des
+
+PLAINTEXT="1010101010101010101010101010101010101010101010101010101010101010"
+KEY1="1111000011110000111100001111000011110000111100001111000011110000"
+KEY2="0000000000000000000000000000000000000000000000000000000000000000"
+
+CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY1" | ./des)
+DECRYPTED=$(echo -e "2\n$CIPHERTEXT\n$KEY2" | ./des)
+
+if [[ "$DECRYPTED" != "$PLAINTEXT" ]]; then
+    echo "PASS"
+    exit 0
+else
+    echo "FAIL"
+    exit 1
+fi

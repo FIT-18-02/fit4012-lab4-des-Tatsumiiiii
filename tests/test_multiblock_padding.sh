@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
-# TODO_STUDENT: Hoàn thiện test cho trường hợp multi-block và padding.
-# Gợi ý: kiểm tra plaintext dài hơn 64 bit, chia block đúng và zero padding đúng.
 set -euo pipefail
 
-echo "TODO_STUDENT: implement multi-block padding test"
-exit 0
+echo "[TEST] Multi-block + padding"
+
+g++ -std=c++17 -Wall -Wextra -pedantic des.cpp -o des
+
+# dài > 64 bit
+PLAINTEXT="101010101010101010101010101010101010101010101010101010101010101010101010"
+KEY="1111000011110000111100001111000011110000111100001111000011110000"
+
+CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY" | ./des)
+DECRYPTED=$(echo -e "2\n$CIPHERTEXT\n$KEY" | ./des)
+
+# so sánh phần đầu (vì có padding)
+TRIMMED=${DECRYPTED:0:${#PLAINTEXT}}
+
+if [[ "$TRIMMED" == "$PLAINTEXT" ]]; then
+    echo "PASS"
+    exit 0
+else
+    echo "FAIL"
+    exit 1
+fi
